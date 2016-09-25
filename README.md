@@ -3,8 +3,9 @@ Data Mining Projects
 
 
 # Setup
-##Python 2.7
-```- wget https://bootstrap.pypa.io/get-pip.py
+## Python 2.7
+```
+- wget https://bootstrap.pypa.io/get-pip.py
 - sudo python get-pip.py
 - sudo pip install virtualenv
 - virtualenv <folder name>
