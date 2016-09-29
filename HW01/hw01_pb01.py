@@ -75,11 +75,14 @@ def part_a():
     files = glob.glob("data/*.csv")
     file_map = divide_files(files)
     fig, ax = plt.subplots(4, 2)
+    fig.canvas.set_window_title('HW01_PB01_A')
     fig.tight_layout()
     row, col = 0, 0
     for train in file_map:
-        mse_train = get_mse(load_data(train))
-        mse_test = get_mse(load_data(file_map[train]))
+        X_train,y_train=load_data(train)
+        X_test,y_test=load_data(file_map[train])
+        mse_train = get_mse(X_train,y_train)
+        mse_test = get_mse(X_test,y_test)
         ax[row][col].plot(np.arange(151), mse_train, label="Train")
         ax[row][col].plot(np.arange(151), mse_test, label="Test")
         ax[row][col].set_xlabel("lambda")
@@ -91,7 +94,6 @@ def part_a():
             row = 0
             col = 1
     fig.delaxes(ax[3][1])
-    plt.show()
 
 
 def part_b():
@@ -117,6 +119,7 @@ def part_b():
             mse_test.append(mse / 10)
         mse_lambda[l] = mse_test
     fig, ax = plt.subplots(3)
+    fig.canvas.set_window_title('HW01_PB01_B')
     fig.tight_layout()
     row = 0
     for l in lambdas:
@@ -125,12 +128,10 @@ def part_b():
         ax[row].set_ylabel("mse")
         ax[row].set_title("lamda = {}".format(l))
         row += 1
-    plt.show()
 
 
 def k_fold_generator(X, y, k_fold):
     subset_size = (X.shape[0]) / k_fold
-    print subset_size
     for k in range(1, k_fold+1):
         start_valid = (k - 1) * subset_size
         end_valid = start_valid + subset_size
@@ -155,8 +156,6 @@ def part_c():
     split_data_file()
     files = glob.glob("data/*.csv")
     file_map = divide_files(files)
-    fig, ax = plt.subplots(4, 2)
-    fig.tight_layout()
     row, col = 0, 0
     cv = {}
     for train_file in file_map:
@@ -166,10 +165,6 @@ def part_c():
             mse_array = []
             X_train = np.hstack((np.ones((X_train.shape[0], 1)), X_train))
             X_valid = np.hstack((np.ones((X_valid.shape[0], 1)), X_valid))
-            print "X_train {}".format(X_train.shape)
-            print "y_train {}".format(y_train.shape)
-            print "X_valid {}".format(X_valid.shape)
-            print "y_valid {}".format(y_valid.shape)
             for l in range(151):
                 rReg = RigeRegression(X_train, y_train, l)
                 rReg.fit()
@@ -178,16 +173,11 @@ def part_c():
         cv_for_all_l = get_cv(cv_array)
         min_vc_index = np.argmin(cv_for_all_l)
         cv[train_file] = (min_vc_index, cv_for_all_l[min_vc_index])
-        row += 1
-        if row == 4:
-            row = 0
-            col = 1
-    fig.delaxes(ax[3][1])
-    # plt.show()
     print cv
 
 
 if __name__ == '__main__':
-    # part_a()
-    # part_b()
+    part_a()
+    part_b()
     part_c()
+    plt.show()
