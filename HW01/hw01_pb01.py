@@ -34,8 +34,11 @@ def load_data(filename):
 def split_data_file():
     data = np.loadtxt('data/train-1000-100.csv', skiprows=1, delimiter=',')
     data_50 = np.split(data, [50])
+    data_50[0] = np.vstack((np.zeros((1,data_50[0].shape[1])), data_50[0]))
     data_100 = np.split(data, [100])
+    data_100[0] = np.vstack((np.zeros((1,data_100[0].shape[1])), data_100[0]))
     data_150 = np.split(data, [150])
+    data_150[0] = np.vstack((np.zeros((1,data_150[0].shape[1])), data_150[0]))
     np.savetxt("data/train-50(1000)-100.csv", data_50[0], delimiter=',')
     np.savetxt("data/train-100(1000)-100.csv", data_100[0], delimiter=',')
     np.savetxt("data/train-150(1000)-100.csv", data_150[0], delimiter=',')
@@ -104,7 +107,6 @@ def part_b():
                 X_train_random = X_train[np.random.randint(X_train.shape[0], size=m), :]
                 X_train_random = np.hstack((np.ones((X_train_random.shape[0], 1)), X_train_random))
                 y_train_random = y_train[np.random.randint(y_train.shape[0], size=m), :]
-
                 rReg = RigeRegression(X_train_random, y_train_random, l)
                 rReg.fit()
 
@@ -126,8 +128,63 @@ def part_b():
     plt.show()
 
 
+def k_fold_generator(X, y, k_fold):
+    subset_size = (X.shape[0]) / k_fold
+    print subset_size
+    for k in range(1, k_fold+1):
+        start_valid = (k - 1) * subset_size
+        end_valid = start_valid + subset_size
+        valid_rows = np.arange(start_valid,end_valid)
+        train_rows = [x for x in range(X.shape[0]) if x not in valid_rows]
+
+        X_train = X[train_rows, :]
+        X_valid = X[valid_rows, :]
+        y_train = y[train_rows, :]
+        y_valid = y[valid_rows, :]
+        # print X_train.shape,X_valid.shape,y_train.shape,y_valid.shape
+        yield X_train, y_train, X_valid, y_valid
+
+
+def get_cv(cv_array):
+    arr = np.array(cv_array)
+    return np.mean(arr, axis=0)
+
+
 def part_c():
-    pass
+    k_fold = 5
+    split_data_file()
+    files = glob.glob("data/*.csv")
+    file_map = divide_files(files)
+    fig, ax = plt.subplots(4, 2)
+    fig.tight_layout()
+    row, col = 0, 0
+    cv = {}
+    for train_file in file_map:
+        X, y = load_data(train_file)
+        cv_array = []
+        for X_train, y_train, X_valid, y_valid in k_fold_generator(X, y, k_fold):
+            mse_array = []
+            X_train = np.hstack((np.ones((X_train.shape[0], 1)), X_train))
+            X_valid = np.hstack((np.ones((X_valid.shape[0], 1)), X_valid))
+            print "X_train {}".format(X_train.shape)
+            print "y_train {}".format(y_train.shape)
+            print "X_valid {}".format(X_valid.shape)
+            print "y_valid {}".format(y_valid.shape)
+            for l in range(151):
+                rReg = RigeRegression(X_train, y_train, l)
+                rReg.fit()
+                mse_array.append(np.mean((rReg.predict(X_valid) - y_valid) ** 2))
+            cv_array.append(mse_array)
+        cv_for_all_l = get_cv(cv_array)
+        min_vc_index = np.argmin(cv_for_all_l)
+        cv[train_file] = (min_vc_index, cv_for_all_l[min_vc_index])
+        row += 1
+        if row == 4:
+            row = 0
+            col = 1
+    fig.delaxes(ax[3][1])
+    # plt.show()
+    print cv
 
 
 if __name__ == '__main__':
