@@ -1,0 +1,132 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+
+\setlength{\textwidth}{7in}
+\setlength{\textheight}{9in}
+\setlength{\oddsidemargin}{-.2in}
+\setlength{\evensidemargin}{-.5in}
+\setlength{\topmargin}{-0.8in}
+
+\newcommand{\argmax}{\operatornamewithlimits{argmax}}
+\newcommand{\argmin}{\operatornamewithlimits{argmin}}
+\renewcommand{\vec}[1]{\ensuremath{\boldsymbol{#1}}}
+\renewcommand{\v}[1]{\vec{#1}}
+\newcommand{\E}{\ensuremath{\mathbb{E}}}
+
+\begin{document}
+
+\begin{center}
+\Large CS6220-03 Data Mining  Techniques -- Fall 2016  \\
+\normalfont
+\vspace{3mm}
+Assignment 1\\
+\end{center}
+\vspace{1mm}
+\framebox{
+\parbox{7in}{
+\vspace{1mm}
+\centering{\bf Submission Instructions}
+\begin{itemize}
+\item \bf{Your program must run on CCIS machines in WVH 102 lab.}
+\vspace{-2mm}
+\item \bf{Create a README file with simple, clear instructions on how to compile and run your code.}
+\vspace{-2mm}
+\item Zip all your files (code, README, written answers, etc.) in a zip file named $\{firstname\}\_\{lastname\}\_CS6220\_HW1.zip$ and upload it to Blackboard.\\
+
+\end{itemize}
+}
+}
+
+\vspace{4mm}
+
+\section*{Exercise 1: Ridge Regression}
+
+\noindent In this assignment, you are given three artificial datasets (1, 2 and 3) and one real world dataset (4). Each dataset has a training and a test file. Specifically, these files are: \\
+
+\vspace{-3mm}
+\indent \indent dataset 1: 	\indent train-100-10.csv \indent \hspace{0.45cm} test-100-10.csv\\
+\indent \indent dataset 2: 	\indent train-100-100.csv \hspace{0.85cm} test-100-100.csv\\
+\indent \indent dataset 3: 	\indent train-1000-100.csv \hspace{-0.4cm}\indent \indent test-1000-100.csv\\
+\indent \indent dataset 4: 	\indent train-wine.csv \hspace{3mm}\indent \indent test-wine.csv\\
+\vspace{-3mm}
+
+\noindent In each file, the last column contains the $y$ values and the other columns are the features ($x$'s). \\
+
+\noindent Start the experiment by creating three additional training files from the 1000\_100\_train.csv by taking the first 50, 100, and 150 instances respectively. Call them 50(1000)\_100\_train.csv, 100(1000)\_100\_train.csv and 150(1000)\_100\_train.csv. The corresponding test file for these datasets would be 1000\_100\_test.csv and no modification is needed. Thus, you should have seven datasets in total and each has a training and a test file.\\
+
+\begin{itemize}
+\vspace{-5mm}
+\item[a.]  Implement $L2$ regularized linear regression algorithm with $\lambda$ range from 0 to 150 (integers only). For each of the seven dataset, plot both the training set MSE and the test set MSE as a function of $\lambda$ (x-axis) in one graph. 
+
+\vspace{2mm}
+{\bf{Discuss : How does $\lambda$ affect the MSE in general? How does the choice of $\lambda$ depend on the number of features vs. examples?  How does $\lambda$ change with number of examples when the number of features is fixed?}}
+
+%\vspace{-3mm}
+\item[b.] Fix $\lambda$ = 1, 46, 150. For each of these values, plot a learning curve for the algorithm using the dataset 1000\_100.csv.\\
+Note: a learning curve plots the performance as a function of the size of the training set. To produce the curve, you need to draw random subsets (of increasing sizes) and record performance (MSE) on the corresponding test set when training on these subsets.  In order to get smooth curves, you should repeat the process at least 10 times and average the results.
+
+%\vspace{-3mm}
+\item[c.] From the plots in question 1,  we can tell which value of $\lambda$ is best for each dataset once we know the test data and its labels. This is not realistic in real world applications. In this part, we use cross validation to set the value for $\lambda$. 
+Implement the CV technique given in class. For each dataset, compared the values of $\lambda$ and MSE with the best values in question 1.  
+
+\vspace{2mm}
+{\bf{Discuss:  How do the values for $\lambda$ and MSE obtained from CV compare to the choice of $\lambda$ and best test set MSE in question 1? What are the drawbacks of CV? What are the factors affecting the performance of CV?}}
+
+
+
+
+\end{itemize}
+
+\section*{Exercise 2: Bayesian Linear Regression}
+
+In this assignment, you will need to derive some identities to express ridge regression and the LASSO as maximum a posteriori (MAP) estimates relative to an appropriate prior, as well as derive confidence intervals on weights in Bayesian linear regression. Please complete this part of the exercise as a PDF file (preferably typed up in LaTeX), and include it in your uploaded zip file named as
+\[ 
+    \{firstname\}\_\{lastname\}\_CS6220\_HW1\_exercise2.pdf
+\]
+
+\begin{itemize}
+\item[a.] Show that ridge regression (i.e. L2-regularized linear regression) and the LASSO are equivalent to a MAP estimation problem in which a prior is placed on the regression weights
+\begin{align*}
+    \v{w}^* 
+    &= 
+    \argmax_{\v{w}}
+    p(\v{w} \,|\, \v{y})
+    \\
+    p(\v{y} \,|\, \v{w})
+    &=
+    \mathcal{N}(\v{y} ; \v{X} \v{w}, \sigma^2 \v{I})
+    \\
+    p(\v{w})
+    &=
+    \mathcal{N}(\v{w} ; \v{0}, s^2 \v{I})
+    \qquad
+    \text{(L2-regularization)}
+    \\
+    p(\v{w})
+    &=
+    \frac{1}{2 b} \exp^{-\frac{|\v{w}|}{b}}
+    \qquad
+    \text{(L1-regularization)}
+\end{align*}
+For each case, express the regularization parameter $\l$ in terms of the constants $\sigma$ and $s$, and $b$.
+
+\item[b.] We will now consider the sightly more general case where we place a multivariate Gaussian prior with parameters $\v{m_0}$ and $\v{S_0}$ on the weights
+\begin{align*}
+    p(\v{w}) 
+    &= 
+    \mathcal{N}(\v{w} ; \v{m}_0, \v{S}_0)
+\end{align*} 
+Calculate the the posterior mean $\v{m}$ and covariance $\v{S}$ such that
+\begin{align*}
+    p(\v{w} \,|\, \v{y}, \v{m}_0, \v{S}_0)
+    = 
+    \mathcal{N}(\v{w} ; \v{m}, \v{S})
+\end{align*}
+Show the steps in the computation (not just the results). \emph{Hint: Expand $\log p(\v{y},\v{w} \,|\, \v{m}_0, \v{S}_0)$ and collect terms that are linear and quadratic in $\v{w}$ (this is known as completing the square).}
+\end{itemize}
+
+
+\end{document}
+
+
+
