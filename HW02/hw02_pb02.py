@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 from  sklearn.metrics import accuracy_score
 from sklearn.neighbors import KNeighborsClassifier
-
+import pprint
 
 class KNN:
     def __init__(self, train_features, train_labels):
@@ -31,7 +31,7 @@ class KNN:
 
 
 def z_normalize(features):
-    return (features - np.mean(features,axis=0)) / np.std(features,axis=0)
+    return (features - np.mean(features, axis=0)) / np.std(features, axis=0)
 
 
 def get_accuracy(test_labels, predictions):
@@ -120,7 +120,29 @@ def part_b():
     ax.set_title("KNN: k vs. accuracy")
 
 
+def part_c():
+    train_features = get_data("data/spambase_train.txt")
+    train_labels = get_data("data/spambase_train_label.txt")
+    test_features = get_data("data/spambase_test.txt")
+    test_labels = get_data("data/spambase_test_label.txt")
+
+    # Normalize
+    train_features = z_normalize(train_features)
+    test_features = z_normalize(test_features)
+
+    knn = KNN(train_features=train_features, train_labels=train_labels)
+    k_values = [1, 5, 21, 41, 61, 81, 101, 201, 401]
+    result = {}
+    for i in range(50):
+        predictions = []
+        for k in k_values:
+            predictions.append(knn.predict(k, test_features[i]))
+        result[i+1] = map(lambda x: "spam" if x == 1.0 else "no", predictions)
+    pprint.pprint(result, width=150)
+
+
 if __name__ == "__main__":
     # part_a()
-    part_b()
+    # part_b()
+    part_c()
     plt.show()
