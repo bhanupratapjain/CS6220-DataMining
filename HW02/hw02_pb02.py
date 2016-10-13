@@ -42,7 +42,7 @@ def get_accuracy(test_labels, predictions):
 
 def get_data(filename):
     data = np.loadtxt(filename, delimiter=',')
-    print "Reading data from [{}] with Shape:{}".format(filename, data.shape)
+    print "Reading spambase from [{}] with Shape:{}".format(filename, data.shape)
     return data
 
 
@@ -61,10 +61,10 @@ def k_fold_generator(X, y, k_fold):
 
 
 def part_a():
-    train_features = get_data("data/spambase_train.txt")
-    train_labels = get_data("data/spambase_train_label.txt")
-    test_features = get_data("data/spambase_test.txt")
-    test_labels = get_data("data/spambase_test_label.txt")
+    train_features = get_data("spambase/spambase_train.txt")
+    train_labels = get_data("spambase/spambase_train_label.txt")
+    test_features = get_data("spambase/spambase_test.txt")
+    test_labels = get_data("spambase/spambase_test_label.txt")
 
     knn = KNN(train_features=train_features, train_labels=train_labels)
 
@@ -101,10 +101,10 @@ def part_a():
 
 
 def part_b():
-    train_features = get_data("data/spambase_train.txt")
-    train_labels = get_data("data/spambase_train_label.txt")
-    test_features = get_data("data/spambase_test.txt")
-    test_labels = get_data("data/spambase_test_label.txt")
+    train_features = get_data("spambase/spambase_train.txt")
+    train_labels = get_data("spambase/spambase_train_label.txt")
+    test_features = get_data("spambase/spambase_test.txt")
+    test_labels = get_data("spambase/spambase_test_label.txt")
 
     # print train_features[0]
     # print test_features[0]
@@ -136,10 +136,10 @@ def part_b():
 
 
 def part_c():
-    train_features = get_data("data/spambase_train.txt")
-    train_labels = get_data("data/spambase_train_label.txt")
-    test_features = get_data("data/spambase_test.txt")
-    test_labels = get_data("data/spambase_test_label.txt")
+    train_features = get_data("spambase/spambase_train.txt")
+    train_labels = get_data("spambase/spambase_train_label.txt")
+    test_features = get_data("spambase/spambase_test.txt")
+    test_labels = get_data("spambase/spambase_test_label.txt")
 
     # Normalize
     train_features = z_normalize(train_features)
@@ -157,8 +157,8 @@ def part_c():
 
 
 def part_d():
-    train_features = get_data("data/spambase_train.txt")
-    train_labels = get_data("data/spambase_train_label.txt")
+    train_features = get_data("spambase/spambase_train.txt")
+    train_labels = get_data("spambase/spambase_train_label.txt")
     train_features = z_normalize(train_features)
 
     k_fold = 5

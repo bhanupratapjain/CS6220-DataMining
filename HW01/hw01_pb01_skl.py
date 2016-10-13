@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 
 from sklearn.metrics import mean_squared_error
 
-train_data = np.loadtxt('data/train-100-10.csv', skiprows=1, delimiter=',')
-test_data = np.loadtxt('data/test-100-10.csv', skiprows=1, delimiter=',')
+train_data = np.loadtxt('spambase/train-100-10.csv', skiprows=1, delimiter=',')
+test_data = np.loadtxt('spambase/test-100-10.csv', skiprows=1, delimiter=',')
 
 # print train_data
 # print len(train_data)

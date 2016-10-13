@@ -37,16 +37,16 @@ def load_data(filename):
 
 
 def split_data_file():
-    data = np.loadtxt('data/train-1000-100.csv', skiprows=1, delimiter=',')
+    data = np.loadtxt('spambase/train-1000-100.csv', skiprows=1, delimiter=',')
     data_50 = np.split(data, [50])
     data_50[0] = np.vstack((np.zeros((1, data_50[0].shape[1])), data_50[0]))
     data_100 = np.split(data, [100])
     data_100[0] = np.vstack((np.zeros((1, data_100[0].shape[1])), data_100[0]))
     data_150 = np.split(data, [150])
     data_150[0] = np.vstack((np.zeros((1, data_150[0].shape[1])), data_150[0]))
-    np.savetxt("data/train-50(1000)-100.csv", data_50[0], delimiter=',')
-    np.savetxt("data/train-100(1000)-100.csv", data_100[0], delimiter=',')
-    np.savetxt("data/train-150(1000)-100.csv", data_150[0], delimiter=',')
+    np.savetxt("spambase/train-50(1000)-100.csv", data_50[0], delimiter=',')
+    np.savetxt("spambase/train-100(1000)-100.csv", data_100[0], delimiter=',')
+    np.savetxt("spambase/train-150(1000)-100.csv", data_150[0], delimiter=',')
 
 
 def read_data_files(filename):
@@ -58,7 +58,7 @@ def divide_files(files):
     for file in files:
         if 'train' in file:
             if '(1000)' in file:
-                file_map[file] = 'data/test-1000-100.csv'
+                file_map[file] = 'spambase/test-1000-100.csv'
             else:
                 file_map[file] = file.replace('train', 'test')
     return file_map
@@ -67,7 +67,7 @@ def divide_files(files):
 def part_a():
     print "Part A [START]"
     split_data_file()
-    files = glob.glob("data/*.csv")
+    files = glob.glob("spambase/*.csv")
     file_map = divide_files(files)
     fig, ax = plt.subplots(4, 2)
     fig.canvas.set_window_title('HW01_PB01_A')
@@ -117,8 +117,8 @@ def part_a():
 def part_b():
     print "Part B [START]"
     lambdas = [1, 46, 150]
-    X_train, y_train = load_data('data/train-1000-100.csv')
-    X_test, y_test = load_data('data/test-1000-100.csv')
+    X_train, y_train = load_data('spambase/train-1000-100.csv')
+    X_test, y_test = load_data('spambase/test-1000-100.csv')
     mse_lambda_test = {}
     mse_lambda_train = {}
     for l in lambdas:
@@ -182,7 +182,7 @@ def part_c():
     print "Part C [START]"
     k_fold = 5
     split_data_file()
-    files = glob.glob("data/*.csv")
+    files = glob.glob("spambase/*.csv")
     file_map = divide_files(files)
     cv = {}
     for train_file in file_map:
