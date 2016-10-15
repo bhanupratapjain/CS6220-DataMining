@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 from  sklearn.metrics import accuracy_score
 from sklearn.neighbors import KNeighborsClassifier
 import pprint
+from sklearn import cross_validation
+from sklearn.cross_validation import cross_val_score
 
 
 class KNN:
@@ -68,22 +70,18 @@ def part_a():
 
     knn = KNN(train_features=train_features, train_labels=train_labels)
 
-    k_values = [1, 5, 21, 41, 61, 81, 101, 201, 401]
+    k_values = [1, 5, 11, 21, 41, 61, 81, 101, 201, 401]
     accuracy = []
     accuracy_skl = []
     for k in k_values:
         predictions = []
-        predictions_skl = []
         for i in range(len(test_features)):
             predictions.append(knn.predict(k, test_features[i]))
-            neigh = KNeighborsClassifier(n_neighbors=k)
-            neigh.fit(train_features, train_labels)
-            predictions_skl.append(neigh.predict(test_features[i].reshape(1, -1)))
-        # print predictions
-        # print test_labels
         accuracy.append(get_accuracy(test_labels, predictions))
+        neigh = KNeighborsClassifier(n_neighbors=k)
+        neigh.fit(train_features, train_labels)
+        predictions_skl = neigh.predict(test_features)
         accuracy_skl.append(accuracy_score(test_labels, predictions_skl))
-        # accuracy.append(accuracy_score(test_labels, predictions))
     print accuracy
     print accuracy_skl
 
@@ -160,21 +158,39 @@ def part_d():
     train_features = get_data("spambase/spambase_train.txt")
     train_labels = get_data("spambase/spambase_train_label.txt")
     train_features = z_normalize(train_features)
-
+    k_values = [1, 5, 21, 41, 61, 81, 101, 201, 401]
     k_fold = 5
     cv = []
-    for X_train, y_train, X_valid, y_valid in k_fold_generator(train_features, train_labels, k_fold):
-        knn = KNN(train_features=X_train, train_labels=y_train)
+
+    for k in k_values:
         accuracy = []
-        for k in range(1, 150):
-            predictions = []
-            for i in range(len(X_valid)):
-                predictions.append(knn.predict(k, X_valid[i]))
+        kf = cross_validation.KFold(len(train_labels), n_folds=k_fold, shuffle=True)
+        for train_index, test_index in kf:
+            X_train, y_train, X_valid, y_valid = \
+                train_features[train_index], train_labels[train_index], \
+                train_features[test_index], train_labels[test_index]
+            knn = KNN(train_features=X_train, train_labels=y_train)
+            predictions = map(lambda x: knn.predict(k, x), X_valid)
             accuracy.append(get_accuracy(y_valid, predictions))
         cv.append(accuracy)
-    accuracy_on_k = np.mean(np.array(cv), axis=0)
+    pprint.pprint(cv)
+    accuracy_on_k = np.mean(np.array(cv), axis=1)
+    pprint.pprint(accuracy_on_k)
     optimal_k_index = np.argmax(accuracy_on_k)
-    print "Optimal Value for K is [{}] with Accuracy [{}]".format(optimal_k_index+1,accuracy_on_k[optimal_k_index])
+    print "Optimal Value for K is [{}] with Accuracy [{}]".format(k_values[optimal_k_index],
+                                                                  accuracy_on_k[optimal_k_index])
+
+    score = []
+    for k in k_values:
+        neigh = KNeighborsClassifier(n_neighbors=k)
+        score.append(cross_val_score(neigh, train_features, train_labels, cv=5))
+    pprint.pprint(score)
+    accuracy_on_k_with_skl = np.mean(np.array(score), axis=1)
+    pprint.pprint(accuracy_on_k_with_skl )
+    optimal_k_index_with_skl = np.argmax(accuracy_on_k_with_skl)
+    print "Optimal Value with sklearn for K is [{}] with Accuracy [{}]".format(k_values[optimal_k_index_with_skl],
+                                                                               accuracy_on_k_with_skl[
+                                                                                   optimal_k_index_with_skl])
 
 
 if __name__ == "__main__":
@@ -182,4 +198,4 @@ if __name__ == "__main__":
     # part_b()
     # part_c()
     part_d()
-    plt.show()
+    # plt.show()
