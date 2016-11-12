@@ -3,9 +3,8 @@
 ## Running Instructions
 
 - use python version 2.7
-- `pip install liac-arff`
 - `pip install jupyter`
-- unzip file `Bhanu_Jain_CS6220_HW2.zip`
-- cd Bhanu_Jain_CS6220_HW2
-- `jupyter notebook`
-- open individual notebooks/pdfs for solutions. 
+- unzip file `Bhanu_Jain_CS6220_HW3.zip`
+- cd Bhanu_Jain_CS6220_HW3
+- `jupyter notebook` for solutions of problem 5. 
+- Refer `cs6200-homework-03-solution.pdf` for rest.
