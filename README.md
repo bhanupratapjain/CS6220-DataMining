@@ -11,5 +11,6 @@ Data Mining Projects
 - pip install jupyter
 - pip install -U scikit-learn
 - jupyter notebook --notebook-dir=/vagrant/code/CS6220-DataMining/notebooks --no-browser --ip=0.0.0.0
+- DISPLAY=localhost:11 ($DISPLAY)
 ```
 
